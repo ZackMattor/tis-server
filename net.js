@@ -10,6 +10,7 @@ Net.prototype = {
   // events
   onPlayerConnect: null,
   onPlayerDisconnect: null,
+  onPlayerMessage: null,
 
   startServer: function() {
     var WebSocketServer = require('websocket').server;
@@ -43,11 +44,9 @@ Net.prototype = {
 
     this.connections.push(connection);
 
-    connection.on('message', function(msg) {
-      connection.keyState = JSON.parse(msg.utf8Data);
-      console.log('GETTING KEYSTATE FROM CLIENT');
-      console.log(connection.keyState);
-    });
+    connection.on('message', function(message) {
+      this.onPlayerMessage(connection.id, message.utf8Data);
+    }.bind(this));
 
     console.log('New connection');
   },
@@ -68,8 +67,7 @@ Net.prototype = {
     this.connections.forEach(function(connection) {
       connection.send(state_string);
     });
-  },
-
+  }
 };
 
 module.exports = Net;

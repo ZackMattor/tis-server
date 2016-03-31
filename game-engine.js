@@ -7,6 +7,7 @@ var GameEngine = function() {
   this.net = new Net();
   this.net.onPlayerConnect = this.addPlayer.bind(this);
   this.net.onPlayerDisconnect = this.removePlayer.bind(this);
+  this.net.onPlayerMessage = this.messageFromPlayer.bind(this);
 
   this.startGameLoop();
 };
@@ -38,6 +39,10 @@ GameEngine.prototype = {
     delete this.players[id];
   },
 
+  messageFromPlayer(id, message) {
+    this.players[id].digestMessage(message);
+  },
+
   processGameLoop: function() {
     this.updatePlayers();
     this.updateProjectiles();
@@ -45,15 +50,14 @@ GameEngine.prototype = {
 
   updatePlayers: function() {
     for(var player_id in this.players) {
-      this.players[player_id].update(/* this.net.getKeyState(player_id) */);
+      this.players[player_id].update();
     }
   },
 
   updateProjectiles: function() {
-    /*this.projectiles.forEach(function(entity) {
-      entity.x += entity.vx;
-      entity.y += entity.vy;
-    });*/
+    this.projectiles.forEach(function(projectile) {
+      projectile.update();
+    });
   },
 
   generateGameState() {
