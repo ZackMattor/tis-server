@@ -8,8 +8,6 @@ var GameEngine = function() {
   this.net.onPlayerConnect = this.addPlayer.bind(this);
   this.net.onPlayerDisconnect = this.removePlayer.bind(this);
   this.net.onPlayerMessage = this.messageFromPlayer.bind(this);
-
-  this.startGameLoop();
 };
 
 GameEngine.prototype = {
