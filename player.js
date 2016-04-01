@@ -18,12 +18,17 @@ var Player = function(id) {
 };
 
 Player.prototype = {
+  speed: 0.3,
+  breakingPower: 0.95,
+  rotationalSpeed: 0.08,
+
   id: null,
   keyState: null,
   x: 200,
   y: 200,
   vx: 0,
   vy: 0,
+  rotation: 0,
   name: 'george',
 
   update: function() {
@@ -37,6 +42,7 @@ Player.prototype = {
     return {
       x: this.x,
       y: this.y,
+      rotation: this.rotation ,
       name: this.name
     }
   },
@@ -48,24 +54,42 @@ Player.prototype = {
 
       if(this.keyState[key_code]) {
         switch(parseInt(key_code)) {
+          // Forward
           case KEY.W:
           case KEY.UP_ARROW:
-            this.vy -= 0.1;
+            var x = Math.sin(this.rotation);
+            var y = Math.cos(this.rotation);
+
+            this.vx -= x * this.speed;
+            this.vy += y * this.speed;
             break;
 
+          // Breaks
           case KEY.S:
           case KEY.DOWN_ARROW:
-            this.vy += 0.1;
+            this.vx *= this.breakingPower;
+            this.vy *= this.breakingPower;
             break;
 
+          // Rotate Left
           case KEY.A:
           case KEY.LEFT_ARROW:
-            this.vx -= 0.1;
+            this.rotation -= this.rotationalSpeed;
             break;
 
+          // Rotate Right
           case KEY.D:
           case KEY.RIGHT_ARROW:
-            this.vx += 0.1;
+            this.rotation += this.rotationalSpeed;
+            break;
+
+          // Rotate Right
+          case KEY.SPACE:
+            this.x = 200;
+            this.y = 200;
+            this.vy = 0;
+            this.vx = 0;
+            this.rotation = 0;
             break;
         }
       }
