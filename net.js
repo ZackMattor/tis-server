@@ -62,10 +62,11 @@ Net.prototype = {
   },
 
   sendStateToClients: function(state) {
-    var state_string = JSON.stringify(state);
-
     this.connections.forEach(function(connection) {
-      connection.send(state_string);
+      connection.send(JSON.stringify({
+        id: connection.id,
+        state: state
+      }));
     });
   }
 };

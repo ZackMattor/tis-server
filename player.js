@@ -3,6 +3,7 @@ var KEY = {
   A: 65,
   S: 83,
   D: 68,
+  R: 82,
 
   LEFT_ARROW: 37,
   UP_ARROW: 38,
@@ -11,6 +12,7 @@ var KEY = {
 
   SPACE: 32
 
+  // https://css-tricks.com/snippets/javascript/javascript-keycodes/
 };
 
 var Player = function(id) {
@@ -38,8 +40,10 @@ Player.prototype = {
     this.y += this.vy;
   },
 
+  // TODO: Rename to serialize??
   gameState: function() {
     return {
+      id: this.id,
       x: this.x,
       y: this.y,
       rotation: this.rotation ,
@@ -83,13 +87,17 @@ Player.prototype = {
             this.rotation += this.rotationalSpeed;
             break;
 
-          // Rotate Right
-          case KEY.SPACE:
+          // Respawn
+          case KEY.R:
             this.x = 200;
             this.y = 200;
             this.vy = 0;
             this.vx = 0;
             this.rotation = 0;
+            break;
+
+          // Respawn
+          case KEY.SPACE:
             break;
         }
       }
