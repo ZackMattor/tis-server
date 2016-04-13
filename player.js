@@ -24,6 +24,12 @@ Player.prototype = {
   breakingPower: 0.95,
   rotationalSpeed: 0.08,
 
+  last_fire: 0,
+  fire_rate: 200,
+
+  // set by parent
+  spawnProjectile: null,
+
   id: null,
   keyState: null,
   x: 200,
@@ -46,7 +52,7 @@ Player.prototype = {
       id: this.id,
       x: this.x,
       y: this.y,
-      rotation: this.rotation ,
+      rotation: this.rotation,
       name: this.name
     }
   },
@@ -98,10 +104,21 @@ Player.prototype = {
 
           // Respawn
           case KEY.SPACE:
+            this.fireCannon();
             break;
         }
       }
     }
+  },
+
+  fireCannon: function() {
+    if(this.last_fire + this.fire_rate > Date.now()) return;
+
+    var vx = this.vx - Math.sin(this.rotation) * 10;
+    var vy = this.vy + Math.cos(this.rotation) * 10;
+    this.spawnProjectile(this.x, this.y, vx, vy, 2000);
+
+    this.last_fire = Date.now();
   },
 
   digestMessage: function(message) {

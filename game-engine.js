@@ -30,7 +30,10 @@ GameEngine.prototype = {
   },
 
   addPlayer(id) {
-    this.players[id] = new Player(id);
+    var player = new Player(id);
+
+    player.spawnProjectile = this.spawnProjectile.bind(this);
+    this.players[id] = player;
   },
 
   removePlayer(id) {
@@ -53,9 +56,17 @@ GameEngine.prototype = {
   },
 
   updateProjectiles: function() {
-    this.projectiles.forEach(function(projectile) {
-      projectile.update();
-    });
+    this.projectiles.forEach(function(projectile, index) {
+      if(projectile.dead_at < Date.now()) {
+        this.projectiles.splice(index, 1);
+      } else {
+        projectile.update();
+      }
+    }.bind(this));
+  },
+
+  spawnProjectile(x, y, vx, vy, life) {
+    this.projectiles.push(new Projectile(x, y, vx, vy, life));
   },
 
   generateGameState() {

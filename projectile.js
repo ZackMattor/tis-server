@@ -1,8 +1,9 @@
-var Projectile = function(id, x, y, vx, vy) {
-  this.id = id;
+var Projectile = function(x, y, vx, vy, life) {
+  //this.id = id;
 
+  this.dead_at = Date.now() + (life || 2000);
   this.x  = x  || 200;
-  this.y  = x  || 200;
+  this.y  = y  || 200;
   this.vx = vx || 0;
   this.vy = vy || 0;
 };
