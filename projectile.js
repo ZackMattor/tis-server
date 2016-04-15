@@ -6,6 +6,7 @@ var Projectile = function(x, y, vx, vy, life) {
   this.y  = y  || 200;
   this.vx = vx || 0;
   this.vy = vy || 0;
+  this.age = 0;
 };
 
 Projectile.prototype = {
@@ -18,6 +19,7 @@ Projectile.prototype = {
   update: function(key_state) {
     this.x += this.vx;
     this.y += this.vy;
+    this.age++;
   },
 
   // TODO: Rename to serialize??

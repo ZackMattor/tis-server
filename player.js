@@ -97,11 +97,7 @@ Player.prototype = {
 
           // Respawn
           case KEY.R:
-            this.x = 200;
-            this.y = 200;
-            this.vy = 0;
-            this.vx = 0;
-            this.rotation = 0;
+            this.respawn();
             break;
 
           // Respawn
@@ -121,6 +117,23 @@ Player.prototype = {
     this.spawnProjectile(this.x, this.y, vx, vy, 2000);
 
     this.last_fire = Date.now();
+  },
+
+  respawn: function() {
+    this.x = 200;
+    this.y = 200;
+    this.vy = 0;
+    this.vx = 0;
+    this.rotation = 0;
+    this.health = 100;
+  },
+
+  takeDamage: function(damage) {
+    this.health -= damage;
+
+    if(this.health <= 0) {
+      this.respawn();
+    }
   },
 
   digestMessage: function(message) {

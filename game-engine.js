@@ -1,6 +1,7 @@
 var Net = require('./net.js');
 var Player = require('./player.js');
 var Projectile = require('./projectile.js');
+var Utils = require('./utils.js');
 
 var GameEngine = function() {
   // Setup out network interface
@@ -15,6 +16,7 @@ GameEngine.prototype = {
 
   projectiles: [],
   players: {},
+  tick: 0,
 
   startGameLoop: function() {
     setInterval(this.gameTick.bind(this), 1000 / 60);
@@ -27,6 +29,8 @@ GameEngine.prototype = {
     this.processGameLoop();
 
     this.net.sendStateToClients(this.generateGameState());
+
+    this.tick++;
   },
 
   addPlayer(id) {
@@ -57,6 +61,19 @@ GameEngine.prototype = {
 
   updateProjectiles: function() {
     this.projectiles.forEach(function(projectile, index) {
+      // check for collisions with the players
+      if(projectile.age > 5) {
+        for(var player_id in this.players) {
+          var player = this.players[player_id];
+          var d = Utils.distance(player, projectile);
+
+          if(d < 40) {
+            this.projectiles.splice(index, 1);
+            player.takeDamage(20);
+          }
+        }
+      }
+
       if(projectile.dead_at < Date.now()) {
         this.projectiles.splice(index, 1);
       } else {
