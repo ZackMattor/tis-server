@@ -76,12 +76,12 @@ GameEngine.prototype = {
     };
 
     for(var player_id in this.players) {
-      var player_game_state = this.players[player_id].gameState();
+      var player_game_state = this.players[player_id].serialize();
       game_state.ships.push(player_game_state);
     }
 
     this.projectiles.forEach(function(projectile) {
-      game_state.projectiles.push(projectile.gameState());
+      game_state.projectiles.push(projectile.serialize());
     });
 
     return game_state;

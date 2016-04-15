@@ -21,7 +21,7 @@ Projectile.prototype = {
   },
 
   // TODO: Rename to serialize??
-  gameState: function() {
+  serialize: function() {
     return {
       x: this.x,
       y: this.y

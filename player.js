@@ -47,7 +47,7 @@ Player.prototype = {
   },
 
   // TODO: Rename to serialize??
-  gameState: function() {
+  serialize: function() {
     return {
       id: this.id,
       x: this.x,
