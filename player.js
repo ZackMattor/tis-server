@@ -26,7 +26,7 @@ Player.prototype = {
 
   last_fire: 0,
   fire_rate: 200,
-  health: 75,
+  health: 100,
 
   // set by parent
   spawnProjectile: null,
