@@ -61,6 +61,12 @@ GameEngine.prototype = {
 
   updateProjectiles: function() {
     this.projectiles.forEach(function(projectile, index) {
+      if(projectile.dead_at < Date.now()) {
+        this.projectiles.splice(index, 1);
+      } else {
+        projectile.update();
+      }
+
       // check for collisions with the players
       if(projectile.age > 5) {
         for(var player_id in this.players) {
@@ -72,12 +78,6 @@ GameEngine.prototype = {
             player.takeDamage(20);
           }
         }
-      }
-
-      if(projectile.dead_at < Date.now()) {
-        this.projectiles.splice(index, 1);
-      } else {
-        projectile.update();
       }
     }.bind(this));
   },
