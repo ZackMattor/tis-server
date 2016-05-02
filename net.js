@@ -22,8 +22,9 @@ Net.prototype = {
       response.end();
     });
 
-    server.listen((process.env.NODE_PORT || 8080), function() {
-      console.log((new Date()) + ' Server is listening on port ' + (process.env.NODE_PORT || 8080));
+    console.log(process.argv);
+    server.listen((process.argv[2] || 8080), function() {
+      console.log((new Date()) + ' Server is listening on port ' + (process.argv[2] || 8080));
     });
 
     this.server = new WebSocketServer({
