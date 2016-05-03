@@ -24,7 +24,7 @@ var utils = {
   },
 
   inBounds(width, height, point_x, point_y) {
-    return (point_x < 0 || point_y < 0 || point_x > width || point_y > height);
+    return (point_x > 0 && point_y > 0 && point_x < width && point_y < height);
   }
 }
 

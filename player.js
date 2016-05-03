@@ -114,7 +114,9 @@ Player.prototype = {
   },
 
   processBoundries() {
-
+    if(!this.inBounds) {
+      this.takeDamage(1);
+    }
   },
 
   fireCannon() {
