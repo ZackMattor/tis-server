@@ -35,7 +35,7 @@ GameEngine.prototype = {
   },
 
   addPlayer(id) {
-    var player = new Player(id);
+    var player = new Player(id, this.mapSize);
 
     player.spawnProjectile = this.spawnProjectile.bind(this);
     this.players[id] = player;
@@ -57,12 +57,8 @@ GameEngine.prototype = {
   updatePlayers() {
     for(var player_id in this.players) {
       let player = this.players[player_id];
-      let map_size = this.mapSize;
-      let in_bounds = Utils.inBounds(this.mapSize[0], map_size[1], player.x, player.y);
 
-      player.update({
-        inBounds: in_bounds
-      });
+      player.update();
     }
   },
 

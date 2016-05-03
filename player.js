@@ -1,3 +1,5 @@
+var Utils = require('./utils.js');
+
 var KEY = {
   W: 87,
   A: 65,
@@ -15,8 +17,9 @@ var KEY = {
   // https://css-tricks.com/snippets/javascript/javascript-keycodes/
 };
 
-var Player = function(id) {
+var Player = function(id, map_size) {
   this.id = id;
+  this.mapSize = map_size;
 };
 
 Player.prototype = {
@@ -41,9 +44,7 @@ Player.prototype = {
   name: 'george',
   inBounds: true,
 
-  update(params) {
-    this.inBounds = params.inBounds;
-
+  update() {
     this.processBoundries();
     this.processControls();
 
@@ -99,12 +100,7 @@ Player.prototype = {
             this.rotation += this.rotationalSpeed;
             break;
 
-          // Respawn
-          case KEY.R:
-            this.respawn();
-            break;
-
-          // Respawn
+          // Fire Cannon
           case KEY.SPACE:
             this.fireCannon();
             break;
@@ -114,7 +110,9 @@ Player.prototype = {
   },
 
   processBoundries() {
-    if(!this.inBounds) {
+    var in_bounds = Utils.inBounds(this.mapSize[0], this.mapSize[1], this.x, this.y);
+
+    if(!in_bounds) {
       this.takeDamage(1);
     }
   },
@@ -130,8 +128,8 @@ Player.prototype = {
   },
 
   respawn() {
-    this.x = 200;
-    this.y = 200;
+    this.x = Utils.getRandomInt(200, this.mapSize[0] - 200);
+    this.y = Utils.getRandomInt(200, this.mapSize[1] - 500);
     this.vy = 0;
     this.vx = 0;
     this.rotation = 0;
