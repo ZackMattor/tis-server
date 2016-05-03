@@ -14,18 +14,19 @@ var GameEngine = function() {
 GameEngine.prototype = {
   net: null,
 
+  mapSize: [4000, 4000],
   projectiles: [],
   players: {},
   tick: 0,
 
-  startGameLoop: function() {
+  startGameLoop() {
     setInterval(this.gameTick.bind(this), 1000 / 60);
 
     // Dummy Projectile
     this.projectiles.push(new Projectile());
   },
 
-  gameTick: function() {
+  gameTick() {
     this.processGameLoop();
 
     this.net.sendStateToClients(this.generateGameState());
@@ -48,19 +49,25 @@ GameEngine.prototype = {
     this.players[id].digestMessage(message);
   },
 
-  processGameLoop: function() {
+  processGameLoop() {
     this.updatePlayers();
     this.updateProjectiles();
   },
 
-  updatePlayers: function() {
+  updatePlayers() {
     for(var player_id in this.players) {
-      this.players[player_id].update();
+      let player = this.players[player_id];
+      let map_size = this.mapSize;
+      let in_bounds = Utils.inBounds(this.mapSize[0], map_size[1], player.x, player.y);
+
+      player.update({
+        inBounds: in_bounds
+      });
     }
   },
 
-  updateProjectiles: function() {
-    this.projectiles.forEach(function(projectile, index) {
+  updateProjectiles() {
+    this.projectiles.forEach((projectile, index) => {
       if(projectile.dead_at < Date.now()) {
         this.projectiles.splice(index, 1);
       } else {
@@ -79,7 +86,7 @@ GameEngine.prototype = {
           }
         }
       }
-    }.bind(this));
+    });
   },
 
   spawnProjectile(x, y, vx, vy, life) {
@@ -97,7 +104,7 @@ GameEngine.prototype = {
       game_state.ships.push(player_game_state);
     }
 
-    this.projectiles.forEach(function(projectile) {
+    this.projectiles.forEach((projectile) => {
       game_state.projectiles.push(projectile.serialize());
     });
 

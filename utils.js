@@ -21,6 +21,10 @@ var utils = {
     }
 
     return Math.sqrt( (x1-x2)*(x1-x2) + (y1-y2)*(y1-y2) );
+  },
+
+  inBounds(width, height, point_x, point_y) {
+    return (point_x < 0 || point_y < 0 || point_x > width || point_y > height);
   }
 }
 

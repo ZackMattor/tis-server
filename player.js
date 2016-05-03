@@ -39,27 +39,31 @@ Player.prototype = {
   vy: 0,
   rotation: 0,
   name: 'george',
+  inBounds: true,
 
-  update: function() {
+  update(params) {
+    this.inBounds = params.inBounds;
+
+    this.processBoundries();
     this.processControls();
 
     this.x += this.vx;
     this.y += this.vy;
   },
 
-  // TODO: Rename to serialize??
-  serialize: function() {
+  serialize() {
     return {
       id: this.id,
       x: this.x,
       y: this.y,
       rotation: this.rotation,
       health: this.health,
-      name: this.name
+      name: this.name,
+      inBounds: this.inBounds
     }
   },
 
-  processControls: function() {
+  processControls() {
     if(this.keyState === null) return;
 
     for(var key_code in this.keyState) {
@@ -109,7 +113,11 @@ Player.prototype = {
     }
   },
 
-  fireCannon: function() {
+  processBoundries() {
+
+  },
+
+  fireCannon() {
     if(this.last_fire + this.fire_rate > Date.now()) return;
 
     var vx = this.vx - Math.sin(this.rotation) * 10;
@@ -119,7 +127,7 @@ Player.prototype = {
     this.last_fire = Date.now();
   },
 
-  respawn: function() {
+  respawn() {
     this.x = 200;
     this.y = 200;
     this.vy = 0;
@@ -128,7 +136,7 @@ Player.prototype = {
     this.health = 100;
   },
 
-  takeDamage: function(damage) {
+  takeDamage(damage) {
     this.health -= damage;
 
     if(this.health <= 0) {
@@ -136,7 +144,7 @@ Player.prototype = {
     }
   },
 
-  digestMessage: function(message) {
+  digestMessage(message) {
     this.keyState = JSON.parse(message);
   }
 };
