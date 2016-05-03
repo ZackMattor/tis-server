@@ -56,7 +56,7 @@ GameEngine.prototype = {
 
   updatePlayers() {
     for(var player_id in this.players) {
-      let player = this.players[player_id];
+      var player = this.players[player_id];
 
       player.update();
     }
