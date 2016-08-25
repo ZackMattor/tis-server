@@ -7,7 +7,6 @@ var Net = function(sessions) {
 
 Net.prototype = {
   max_index: 0,
-  unauth_connections: [],
   server: null,
 
   callbacks: {},
@@ -44,8 +43,6 @@ Net.prototype = {
     connection.id = this.max_index;
     this.max_index++;
 
-    this.unauth_connections.push(connection);
-
     connection.on('message', function(message) {
       data = JSON.parse(message.utf8Data);
 
@@ -57,8 +54,14 @@ Net.prototype = {
         break;
 
         case 'auth':
-          this.sessions.find(session_id).connection = connection;
-          this.onPlayerConnect(session_id);
+          var session = this.sessions.find(session_id);
+
+          if(session) {
+            session.connection = connection;
+            this.onPlayerConnect(session_id);
+          } else {
+            connection.close();
+          }
         break;
       }
     }.bind(this));

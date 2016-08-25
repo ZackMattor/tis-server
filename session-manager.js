@@ -22,8 +22,7 @@ SessionManager.prototype = {
 
   deleteByConnection(connection) {
     for(var session_id in this._sessions) {
-      var session = this._sessions[session_id];
-      if(session.connection.id == connection.id) {
+      if(this._sessions[session_id].connection.id == connection.id) {
         console.log('DELETING');
         delete this._sessions[session_id];
       }
