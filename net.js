@@ -67,7 +67,8 @@ Net.prototype = {
   },
 
   onClose: function(connection) {
-    var session = this.sessions.deleteByConnection(connection);
+    console.log('END OF CONNECTION');
+    this.sessions.deleteByConnection(connection);
   },
 
   sendStateToClients: function(state) {

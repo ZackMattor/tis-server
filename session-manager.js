@@ -21,9 +21,11 @@ SessionManager.prototype = {
   },
 
   deleteByConnection(connection) {
-    for(var i=0; i<this._sessions.length; i++) {
-      if(this._sessions[i].connection.id == connection.id) {
-        delete this._sessions[i];
+    for(var session_id in this._sessions) {
+      var session = this._sessions[session_id];
+      if(session.connection.id == connection.id) {
+        console.log('DELETING');
+        delete this._sessions[session_id];
       }
     }
   },
