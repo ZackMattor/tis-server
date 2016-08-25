@@ -9,7 +9,7 @@ var HttpServer = function(cb) {
 
 HttpServer.prototype = {
   route: function(request, response) {
-    // TODO:  Add cross origin flag
+    response.setHeader('Access-Control-Allow-Origin', '*');
 
     var route_map = {
       '/session/new': 'auth'

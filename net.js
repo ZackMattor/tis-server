@@ -1,12 +1,13 @@
 var HttpServer = require('./http-server');
 
-var Net = function() {
+var Net = function(sessions) {
+  this.sessions = sessions;
   this.startServer();
 };
 
 Net.prototype = {
   max_index: 0,
-  connections: [],
+  unauth_connections: [],
   server: null,
 
   callbacks: {},
@@ -19,6 +20,7 @@ Net.prototype = {
   startServer: function() {
     var WebSocketServer = require('websocket').server;
 
+    // create our server and wire up our http server to callbacks
     var server = new HttpServer(function(method, data) {
       return this.callbacks[method](data);
     }.bind(this));
@@ -42,34 +44,45 @@ Net.prototype = {
     connection.id = this.max_index;
     this.max_index++;
 
-    this.onPlayerConnect(connection.id);
-
-    this.connections.push(connection);
+    this.unauth_connections.push(connection);
 
     connection.on('message', function(message) {
-      this.onPlayerMessage(connection.id, message.utf8Data);
+      data = JSON.parse(message.utf8Data);
+
+      var session_id = data.session_id;
+
+      switch(data.type) {
+        case 'player-update':
+          this.onPlayerMessage(session_id, data.data);
+        break;
+
+        case 'auth':
+          this.sessions.find(session_id).connection = connection;
+          this.onPlayerConnect(session_id);
+        break;
+      }
     }.bind(this));
 
     console.log('New connection');
   },
 
   onClose: function(connection) {
-    // TODO: Look up efficiency of indexOf vs hash of IDs
-    var index = this.connections.indexOf(connection);
-
-    this.onPlayerDisconnect(connection.id);
-
-    this.connections.splice(index, 1);
-    console.log('connection closed');
+    var session = this.sessions.deleteByConnection(connection);
   },
 
   sendStateToClients: function(state) {
-    this.connections.forEach(function(connection) {
+    var sessions = this.sessions.all();
+
+    for(var key in sessions) {
+      var connection = sessions[key].connection;
+
+      if(!connection) continue;
+
       connection.send(JSON.stringify({
         id: connection.id,
         state: state
       }));
-    });
+    }
   },
 
   on: function(event_name, callback) {

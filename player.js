@@ -41,7 +41,7 @@ Player.prototype = {
   vx: 0,
   vy: 0,
   rotation: 0,
-  name: 'george',
+  name: null,
   inBounds: true,
 
   update() {
@@ -144,8 +144,8 @@ Player.prototype = {
     }
   },
 
-  digestMessage(message) {
-    this.keyState = JSON.parse(message);
+  updateKeyState(keyState) {
+    this.keyState = keyState;
   }
 };
 

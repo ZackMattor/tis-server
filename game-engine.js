@@ -2,12 +2,13 @@ var Net = require('./net.js');
 var Player = require('./player.js');
 var Projectile = require('./projectile.js');
 var Utils = require('./utils.js');
+var SessionManager = require('./session-manager.js');
 
 var GameEngine = function() {
-  // Setup out network interface
-  this.net = new Net();
+  this.sessions = new SessionManager();
+
+  this.net = new Net(this.sessions);
   this.net.onPlayerConnect = this.addPlayer.bind(this);
-  this.net.onPlayerDisconnect = this.removePlayer.bind(this);
   this.net.onPlayerMessage = this.messageFromPlayer.bind(this);
 
   this.net.on('auth', this.authenticatePlayer.bind(this));
@@ -18,7 +19,6 @@ GameEngine.prototype = {
 
   mapSize: [4000, 4000],
   projectiles: [],
-  players: {},
   tick: 0,
 
   startGameLoop() {
@@ -36,23 +36,28 @@ GameEngine.prototype = {
     this.tick++;
   },
 
-  addPlayer(id) {
-    var player = new Player(id, this.mapSize);
+  addPlayer(session_id) {
+    var player = new Player(session_id, this.mapSize);
 
     player.spawnProjectile = this.spawnProjectile.bind(this);
-    this.players[id] = player;
+
+    var session = this.sessions.find(session_id);
+    player.name = session.name;
+    session.player = player;
   },
 
-  authenticatePlayer() {
-    return {status: 'ok'};
+  authenticatePlayer(data) {
+    if(data['nickname']) {
+      var session_id = this.sessions.create(data['nickname']);
+
+      return { session_id: session_id };
+    } else {
+      return { error: 'No nickname set' };
+    }
   },
 
-  removePlayer(id) {
-    delete this.players[id];
-  },
-
-  messageFromPlayer(id, message) {
-    this.players[id].digestMessage(message);
+  messageFromPlayer(id, keyState) {
+    this.sessions.getPlayer(id).updateKeyState(keyState);
   },
 
   processGameLoop() {
@@ -61,11 +66,9 @@ GameEngine.prototype = {
   },
 
   updatePlayers() {
-    for(var player_id in this.players) {
-      var player = this.players[player_id];
-
+    this.sessions.eachPlayer((player) => {
       player.update();
-    }
+    });
   },
 
   updateProjectiles() {
@@ -78,15 +81,14 @@ GameEngine.prototype = {
 
       // check for collisions with the players
       if(projectile.age > 5) {
-        for(var player_id in this.players) {
-          var player = this.players[player_id];
+        this.sessions.eachPlayer((player) => {
           var d = Utils.distance(player, projectile);
 
           if(d < 40) {
             this.projectiles.splice(index, 1);
             player.takeDamage(20);
           }
-        }
+        });
       }
     });
   },
@@ -101,9 +103,13 @@ GameEngine.prototype = {
       projectiles: []
     };
 
-    for(var player_id in this.players) {
-      var player_game_state = this.players[player_id].serialize();
-      game_state.ships.push(player_game_state);
+    this.sessions.eachPlayer((player) => {
+      game_state.ships.push(player.serialize());
+    });
+
+    for(var session_id in this.sessions.all()) {
+      var player = this.sessions.find(session_id).player;
+
     }
 
     this.projectiles.forEach((projectile) => {
