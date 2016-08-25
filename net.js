@@ -1,3 +1,5 @@
+var HttpServer = require('./http-server');
+
 var Net = function() {
   this.startServer();
 };
@@ -7,6 +9,8 @@ Net.prototype = {
   connections: [],
   server: null,
 
+  callbacks: {},
+
   // events
   onPlayerConnect: null,
   onPlayerDisconnect: null,
@@ -14,13 +18,10 @@ Net.prototype = {
 
   startServer: function() {
     var WebSocketServer = require('websocket').server;
-    var http = require('http');
 
-    var server = http.createServer(function(request, response) {
-      console.log((new Date()) + ' Received request for ' + request.url);
-      response.writeHead(404);
-      response.end();
-    });
+    var server = new HttpServer(function(method, data) {
+      return this.callbacks[method](data);
+    }.bind(this));
 
     console.log(process.argv);
     server.listen((process.argv[2] || 8080), function() {
@@ -69,6 +70,10 @@ Net.prototype = {
         state: state
       }));
     });
+  },
+
+  on: function(event_name, callback) {
+    this.callbacks[event_name] = callback;
   }
 };
 

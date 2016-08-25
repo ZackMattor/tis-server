@@ -9,6 +9,8 @@ var GameEngine = function() {
   this.net.onPlayerConnect = this.addPlayer.bind(this);
   this.net.onPlayerDisconnect = this.removePlayer.bind(this);
   this.net.onPlayerMessage = this.messageFromPlayer.bind(this);
+
+  this.net.on('auth', this.authenticatePlayer.bind(this));
 };
 
 GameEngine.prototype = {
@@ -39,6 +41,10 @@ GameEngine.prototype = {
 
     player.spawnProjectile = this.spawnProjectile.bind(this);
     this.players[id] = player;
+  },
+
+  authenticatePlayer() {
+    return {status: 'ok'};
   },
 
   removePlayer(id) {
