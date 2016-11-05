@@ -13,7 +13,6 @@ var KEY = {
   DOWN_ARROW: 40,
 
   SPACE: 32
-
   // https://css-tricks.com/snippets/javascript/javascript-keycodes/
 };
 

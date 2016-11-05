@@ -1,5 +1,5 @@
 var Projectile = function(x, y, vx, vy, life) {
-  //this.id = id;
+  this.id = this._generateId();
 
   this.dead_at = Date.now() + (life || 2000);
   this.x  = x  || 200;
@@ -25,9 +25,20 @@ Projectile.prototype = {
   // TODO: Rename to serialize??
   serialize: function() {
     return {
+      id: this.id,
       x: this.x,
       y: this.y
     }
+  },
+
+  _generateId: function() {
+    var s4 = function() {
+      return Math.floor((1 + Math.random()) * 0x10000)
+        .toString(16)
+        .substring(1);
+    };
+
+    return s4() + s4();
   }
 };
 
