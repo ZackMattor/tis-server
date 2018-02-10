@@ -1,0 +1,39 @@
+# Javascript Node CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-javascript/ for more details
+#
+version: 2
+jobs:
+  build:
+    docker:
+      # specify the version you desire here
+      - image: circleci/node:9
+
+    working_directory: ~/app
+
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "package.json" }}
+          # fallback to using the latest cache if no exact match is found
+          - v1-dependencies-
+      - run: npm install
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}
+
+      - setup_remote_docker
+
+      - deploy:
+          name: deplopy image on master
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+              docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+
+              docker build -t zackmattor/tis-server:latest .
+              docker tag zackmattor/tis-server:latest zackmattor/tis-server:$CIRCLE_SHA1
+              docker push zackmattor/tis-server:$CIRCLE_SHA1
+              docker push zackmattor/tis-server:latest
+            fi
