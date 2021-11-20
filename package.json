@@ -8,7 +8,7 @@
     "test": "tests"
   },
   "scripts": {
-    "start": "node"
+    "start": "node index.js"
   },
   "repository": "",
   "engines": {
