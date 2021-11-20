@@ -21,7 +21,7 @@ export class SessionManager {
   }
 
   map (cb) {
-    let arr = []
+    const arr = []
 
     this.eachPlayer(p => arr.push(cb(p)))
 
