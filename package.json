@@ -9,6 +9,7 @@
     "test": "tests"
   },
   "scripts": {
+    "lint": "eslint ./src",
     "start": "node src/index.js"
   },
   "repository": "",

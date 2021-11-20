@@ -25,6 +25,7 @@ jobs:
           key: v1-dependencies-{{ checksum "package.json" }}
 
       - setup_remote_docker
+      - run: npm run lint
 
       - deploy:
           name: deplopy image on master
