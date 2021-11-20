@@ -12,7 +12,7 @@ HttpServer.prototype = {
     response.setHeader('Access-Control-Allow-Origin', '*');
 
     var route_map = {
-      '/session/new': 'auth'
+      '/api/session/new': 'auth'
     };
 
     var handled = false;
