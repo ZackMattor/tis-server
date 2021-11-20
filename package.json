@@ -3,12 +3,13 @@
   "version": "0.0.1",
   "description": "Server for the space shooter game!",
   "private": true,
+  "type": "module",
   "directories": {
     "doc": "doc",
     "test": "tests"
   },
   "scripts": {
-    "start": "node index.js"
+    "start": "node src/index.js"
   },
   "repository": "",
   "engines": {
@@ -17,6 +18,13 @@
   "author": "ZackMattor",
   "license": "MIT",
   "devDependencies": {
+    "eslint": "^7.32.0",
+    "eslint-config-standard": "^16.0.3",
+    "eslint-plugin-import": "^2.25.3",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^5.1.1"
+  },
+  "dependencies": {
     "websocket": "^1.0.34"
   }
 }
