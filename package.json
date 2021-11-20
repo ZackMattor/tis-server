@@ -17,6 +17,6 @@
   "author": "ZackMattor",
   "license": "MIT",
   "devDependencies": {
-    "websocket": "1.0.22"
+    "websocket": "^1.0.34"
   }
 }
